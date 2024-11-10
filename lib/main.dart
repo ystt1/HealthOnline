@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:health_online/core/app_theme.dart';
 import 'package:health_online/presentation/auth/page/login_page.dart';
 import 'package:health_online/presentation/auth/page/sign_up_page.dart';
+import 'package:health_online/presentation/booking/page/booking_page.dart';
+import 'package:health_online/presentation/booking/page/choose_time_page.dart';
+import 'package:health_online/presentation/booking/page/details_doctor_page.dart';
 import 'package:health_online/presentation/home/page/home_page.dart';
 import 'package:health_online/presentation/profile/page/profile_page.dart';
 
@@ -19,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: AppTheme.customTheme,
-      home: const ProfilePage(),
+      home: const ChooseTimePage(),
     );
   }
 }
