@@ -11,10 +11,11 @@ class BackAndTitle extends StatelessWidget {
       height: 30,
       width: double.infinity,
       child: Row(
-
         children: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             icon: const Icon(
               Icons.arrow_back,
               color: Colors.white,
@@ -24,7 +25,10 @@ class BackAndTitle extends StatelessWidget {
             child: Center(
               child: Text(
                 title,
-                style: const TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500),
               ),
             ),
           ),

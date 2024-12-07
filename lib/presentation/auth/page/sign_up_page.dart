@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_online/common/bloc/auth/auth_state.dart';
+import 'package:health_online/common/bloc/auth/auth_state_cubit.dart';
+import 'package:health_online/common/bloc/button/button_state.dart';
+import 'package:health_online/common/bloc/button/button_state_cubit.dart';
 import 'package:health_online/common/helper/app_navigator.dart';
 import 'package:health_online/core/app_colors.dart';
+import 'package:health_online/data/auth/models/user_model_createReq.dart';
+import 'package:health_online/domain/auth/usecase/sign_up_usecase.dart';
 import 'package:health_online/presentation/auth/page/login_page.dart';
+import 'package:health_online/presentation/home/page/home_page.dart';
 
 import '../../../core/configs/app_vector.dart';
 
@@ -14,38 +22,68 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   bool _obscurePassword = true;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  TextEditingController fullNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height -
-                  MediaQuery.of(context).padding.top -
-                  MediaQuery.of(context).padding.bottom,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 74),
-                _titleLines(),
-                const SizedBox(height: 30),
-                _hero(),
-                const SizedBox(height: 30),
-                _fullNameField(),
-                const SizedBox(height: 30),
-                _emailField(),
-                const SizedBox(height: 20),
-                _passwordField(),
-                const SizedBox(height: 20),
-                _loginBtn(),
-                const SizedBox(height: 30),
-                _bottomLink(),
-              ],
+    return BlocProvider(
+      create: (BuildContext context) => AuthStateCubit(),
+      child: Scaffold(
+        body: BlocListener<AuthStateCubit, AuthState>(
+          listener: (BuildContext context, state) {
+            if (state is AuthSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Đăng kí thành công!'),
+                ),
+              );
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+                (route) => false,
+              );
+            }
+            if (state is AuthFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage),
+                ),
+              );
+            }
+          },
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top -
+                      MediaQuery.of(context).padding.bottom,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 74),
+                    _titleLines(),
+                    const SizedBox(height: 30),
+                    _hero(),
+                    const SizedBox(height: 30),
+                    _fullNameField(),
+                    const SizedBox(height: 30),
+                    _emailField(),
+                    const SizedBox(height: 20),
+                    _passwordField(),
+                    const SizedBox(height: 20),
+                    _loginBtn(context),
+                    const SizedBox(height: 30),
+                    _bottomLink(),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -87,16 +125,19 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget _fullNameField() {
-    return const TextField(
-      decoration: InputDecoration(
+    return TextField(
+      controller: fullNameController,
+      decoration: const InputDecoration(
         hintText: 'Full Name',
       ),
     );
   }
 
   Widget _emailField() {
-    return const TextField(
-      decoration: InputDecoration(
+    return TextField(
+      keyboardType: TextInputType.emailAddress,
+      controller: emailController,
+      decoration: const InputDecoration(
         hintText: 'Email',
       ),
     );
@@ -104,6 +145,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _passwordField() {
     return TextField(
+      controller: passwordController,
       obscureText: _obscurePassword,
       decoration: InputDecoration(
         hintText: 'Password',
@@ -124,17 +166,26 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _loginBtn() {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-      ),
-      onPressed: () {},
-      child: const Text(
-        'Login',
-        style: TextStyle(color: Colors.white),
-      ),
-    );
+  Widget _loginBtn(BuildContext context) {
+    return Builder(builder: (context) {
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+        ),
+        onPressed: () {
+          context.read<AuthStateCubit>().execute(
+              params: UserModelCreateReq(
+                  email: emailController.text,
+                  password: passwordController.text,
+                  fullName: fullNameController.text),
+              usecase: SignUpUseCase());
+        },
+        child: const Text(
+          'Sign Up',
+          style: TextStyle(color: Colors.white),
+        ),
+      );
+    });
   }
 
   Widget _bottomLink() {

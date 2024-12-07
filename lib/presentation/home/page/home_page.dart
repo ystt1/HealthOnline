@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_online/common/bloc/auth/auth_state_cubit.dart';
 import 'package:health_online/core/app_colors.dart';
 import 'package:health_online/core/configs/app_vector.dart';
+import 'package:health_online/core/user_storage.dart';
+import 'package:health_online/presentation/booking/page/booking_page.dart';
+import 'package:health_online/presentation/history/page/history_page.dart';
 import 'package:health_online/presentation/home/widgets/selection_card.dart';
+import 'package:health_online/presentation/profile/page/profile_page.dart';
+import 'package:health_online/presentation/splash/page/splash_page.dart';
+
+import '../../../common/helper/app_navigator.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -17,15 +26,50 @@ class HomePage extends StatelessWidget {
               height: 68,
             ),
             _titleAndUserProfile(context),
-            const SizedBox(height: 16,),
-            SelectionCard(onPress: (){}, title: 'Thông tin cá nhân', iconAsset: AppVector.firstSelection),
-            const SizedBox(height: 16,),
-            SelectionCard(onPress: (){}, title: 'Đặt lịch khám', iconAsset: AppVector.secondSelection),
-            const SizedBox(height: 16,),
-            SelectionCard(onPress: (){}, title: 'Lịch sử khám', iconAsset: AppVector.thirdSelection),
-            const SizedBox(height: 16,),
-            SelectionCard(onPress: (){}, title: 'Messages', iconAsset: AppVector.fourthSelection),
-
+            const SizedBox(
+              height: 16,
+            ),
+            SelectionCard(
+                onPress: () {
+                  AppNavigator.push(context, const ProfilePage());
+                },
+                title: 'Thông tin cá nhân',
+                iconAsset: AppVector.firstSelection),
+            const SizedBox(
+              height: 16,
+            ),
+            SelectionCard(
+                onPress: () {
+                  AppNavigator.push(context, const BookingPage());
+                },
+                title: 'Đặt lịch khám',
+                iconAsset: AppVector.secondSelection),
+            const SizedBox(
+              height: 16,
+            ),
+            SelectionCard(
+                onPress: () {
+                  AppNavigator.push(context, const HistoryPage());
+                },
+                title: 'Lịch sử khám',
+                iconAsset: AppVector.thirdSelection),
+            const SizedBox(
+              height: 16,
+            ),
+            SelectionCard(
+                onPress: () {},
+                title: 'Messages',
+                iconAsset: AppVector.fourthSelection),
+            const SizedBox(
+              height: 16,
+            ),
+            SelectionCard(
+                onPress: () {
+                  context.read<AuthStateCubit>().logOut();
+                  AppNavigator.pushAndRemove(context, SplashPage());
+                },
+                title: 'LogOut',
+                iconAsset: AppVector.logOutSelection),
           ],
         ),
       ),
@@ -48,8 +92,8 @@ class HomePage extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              const Text(
-                "hello A",
+              Text(
+                "hello ${UserStorage.getFullName()}",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               )
             ],

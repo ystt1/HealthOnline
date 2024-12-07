@@ -1,12 +1,22 @@
-class ChooseDateState{}
+import 'package:health_online/domain/booking/entity/time_slot.dart';
 
-class ChooseDateLoading extends ChooseDateState{}
+abstract class ChooseDateState{
+}
+class ChooseDateInitialState extends ChooseDateState{
 
-class ChooseDateLoaded extends ChooseDateState{
-  final String month;
+}
+class ChooseDateLoading extends ChooseDateState{
 
+}
 
+class ChooseDateLoadSuccess extends ChooseDateState{
+  final List<int> choseSlot;
 
-  ChooseDateLoaded({required this.month});
+  ChooseDateLoadSuccess({required this.choseSlot});
+}
 
+class ChooseDateLoadFailure extends ChooseDateState{
+  final String errorMessage;
+
+  ChooseDateLoadFailure({required this.errorMessage});
 }

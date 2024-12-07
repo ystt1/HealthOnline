@@ -12,4 +12,5 @@ class AppVector{
   static const secondSelection='assets/vectors/2ndSelection.png';
   static const thirdSelection='assets/vectors/3rdSelection.png';
   static const fourthSelection='assets/vectors/4thSelection.png';
+  static const logOutSelection='assets/vectors/logOut.png';
 }

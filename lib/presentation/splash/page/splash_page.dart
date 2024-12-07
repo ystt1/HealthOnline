@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_online/core/app_colors.dart';
-import 'package:health_online/presentation/auth/page/sign_up_page.dart';
+import 'package:health_online/presentation/auth/page/sign_up_page.dart';import '../../../common/bloc/auth/auth_state.dart';
+import '../../../common/bloc/auth/auth_state_cubit.dart';
+
 
 import '../../../common/helper/app_navigator.dart';
 import '../../auth/page/login_page.dart';
+import '../../home/page/home_page.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
@@ -11,23 +15,33 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 74),
-            _titleLines(),
-            const SizedBox(height: 50),
-            _hero(),
-            const Spacer(),
-            _signUpBtn(context),
-            const SizedBox(height: 20),
-            _loginBtn(context),
-            const SizedBox(height: 30),
-          ],
-        ),
+      body: BlocBuilder<AuthStateCubit, AuthState>(
+        builder: (BuildContext context, AuthState state) {
+          if (state is AuthSuccess) {
+
+            return const HomePage();
+          } else {
+
+            return Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 74),
+                  _titleLines(),
+                  const SizedBox(height: 50),
+                  _hero(),
+                  const Spacer(),
+                  _signUpBtn(context),
+                  const SizedBox(height: 20),
+                  _loginBtn(context),
+                  const SizedBox(height: 30),
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }
