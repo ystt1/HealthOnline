@@ -93,13 +93,11 @@ class HistorySpringbootServiceImp extends HistorySpringbootService {
       final String responseBody =
           utf8.decode(response.bodyBytes);
       if (response.statusCode == 200) {
-        print(responseBody);
+
         return const Right("add review success");
       }
-      print(responseBody.toString());
       return Left(responseBody.toString());
     } catch (e) {
-      print(e.toString());
       return Left(e);
     }
   }

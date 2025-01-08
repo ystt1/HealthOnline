@@ -28,6 +28,7 @@ class HistoryPage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        centerTitle: true,
       ),
       body: BlocProvider(
         create: (BuildContext context) {
@@ -35,14 +36,8 @@ class HistoryPage extends StatelessWidget {
           cubit.getHistory();
           return cubit;
         },
-        child: Container(
-          width: double.infinity,
-          margin: const EdgeInsets.only(top: 32),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: CupertinoColors.systemGrey4,
-          ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: _histories(context),
         ),
       ),
@@ -50,53 +45,119 @@ class HistoryPage extends StatelessWidget {
   }
 
   Widget _histories(BuildContext context) {
-    return Builder(builder: (context) {
-      return BlocBuilder<GetHistoryCubit, GetHistoryState>(
-        builder: (BuildContext context, GetHistoryState state) {
-          if (state is GetHistoryStateLoading) {
-            return const Center(child: CircularProgressIndicator());
+    return BlocBuilder<GetHistoryCubit, GetHistoryState>(
+      builder: (BuildContext context, GetHistoryState state) {
+        if (state is GetHistoryStateLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state is GetHistoryStateFailure) {
+          return Center(
+            child: Text(
+              state.errorMsg,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.redAccent,
+              ),
+            ),
+          );
+        }
+        if (state is GetHistoryStateSuccess) {
+          if (state.histories.isEmpty) {
+            return const Center(
+              child: Text(
+                'Không có lịch sử khám bệnh nào.',
+                style: TextStyle(fontSize: 16, color: CupertinoColors.systemGrey),
+              ),
+            );
           }
-          if (state is GetHistoryStateFailure) {
-            return Center(child: Text(state.errorMsg));
-          }
-          if (state is GetHistoryStateSuccess) {
-            return ListView.builder(
-                itemCount: state.histories.length,
-                itemBuilder: (context, index) {
-                  return _historyCard(context, state.histories[index]);
-                });
-          }
-          return const Center(child: Text('Something went wrong'));
-        },
-      );
-    });
+          return ListView.builder(
+            itemCount: state.histories.length,
+            itemBuilder: (context, index) {
+              return _historyCard(context, state.histories[index]);
+            },
+          );
+        }
+        return const Center(child: Text('Đã xảy ra lỗi!'));
+      },
+    );
   }
 
   Widget _historyCard(BuildContext context, HistoryEntity history) {
     return GestureDetector(
       onTap: () {
-        if (history.status == 1) AppNavigator.push(context,  PrescriptionPage(historyEntity: history,));
+        if (history.status == 1) {
+          AppNavigator.push(
+            context,
+            PrescriptionPage(historyEntity: history),
+          );
+        }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
         margin: const EdgeInsets.symmetric(vertical: 10),
-        height: 148,
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: Colors.white,
-            boxShadow: [
-              const BoxShadow(color: Colors.grey, blurRadius: 8, offset: Offset(0, 4))
-            ]),
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${AppConstant.time[history.slot]} ${history.date}'),
+            Row(
+              children: [
+                Icon(
+                  history.status == 0
+                      ? Icons.hourglass_empty_outlined
+                      : Icons.check_circle_outline,
+                  color: history.status == 0
+                      ? CupertinoColors.systemYellow
+                      : CupertinoColors.activeGreen,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '${AppConstant.time[history.slot]} ${history.date}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
             Text(
-                'Trạng thái: ${history.status == 0 ? 'Đang đợi' : 'Đã hoàn thành'}'),
-            Text('Bác sĩ: ${history.doctorName}'),
-            Text('Chuyên ngành: ${history.specialization}')
+              'Trạng thái: ${history.status == 0 ? 'Đang đợi' : 'Đã hoàn thành'}',
+              style: TextStyle(
+                fontSize: 14,
+                color: history.status == 0
+                    ? CupertinoColors.systemYellow
+                    : CupertinoColors.activeGreen,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Bác sĩ: ${history.doctorName}',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Chuyên ngành: ${history.specialization}',
+              style: const TextStyle(
+                fontSize: 14,
+                color: CupertinoColors.systemGrey,
+              ),
+            ),
           ],
         ),
       ),

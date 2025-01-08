@@ -101,7 +101,6 @@ class AppointmentSpringbootServiceImp extends AppointmentSpringbootService {
         json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         final reviews =
         responseBody.map((data) => ReviewResponse.fromMap(data)).toList();
-
         return Right(reviews);
       } else {
 

@@ -4,6 +4,7 @@ import 'package:health_online/common/bloc/auth/auth_state_cubit.dart';
 import 'package:health_online/core/app_colors.dart';
 import 'package:health_online/core/configs/app_vector.dart';
 import 'package:health_online/core/user_storage.dart';
+import 'package:health_online/presentation/advanced/page/health_check_page.dart';
 import 'package:health_online/presentation/booking/page/booking_page.dart';
 import 'package:health_online/presentation/history/page/history_page.dart';
 import 'package:health_online/presentation/home/widgets/selection_card.dart';
@@ -57,8 +58,8 @@ class HomePage extends StatelessWidget {
               height: 16,
             ),
             SelectionCard(
-                onPress: () {},
-                title: 'Messages',
+                onPress: () { AppNavigator.push(context, HealthCheckPage());},
+                title: 'Tư vấn',
                 iconAsset: AppVector.fourthSelection),
             const SizedBox(
               height: 16,

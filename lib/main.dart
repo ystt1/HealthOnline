@@ -4,6 +4,7 @@ import 'package:health_online/common/bloc/auth/auth_state.dart';
 import 'package:health_online/common/bloc/auth/auth_state_cubit.dart';
 import 'package:health_online/core/app_theme.dart';
 import 'package:health_online/core/user_storage.dart';
+import 'package:health_online/presentation/advanced/page/health_check_page.dart';
 import 'package:health_online/presentation/home/page/home_page.dart';
 import 'package:health_online/presentation/splash/page/splash_page.dart';
 import 'package:health_online/service_locator.dart';
@@ -30,13 +31,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-        theme: AppTheme.customTheme,
-        home: BlocBuilder<AuthStateCubit, AuthState>(
-            builder: (BuildContext context, AuthState state) {
+      theme: AppTheme.customTheme,
+      home: BlocBuilder<AuthStateCubit, AuthState>(
+        builder: (BuildContext context, AuthState state) {
           if (state is AuthSuccess) {
             return HomePage();
           }
           return SplashPage();
-        }));
+        },
+      ),
+    );
   }
 }

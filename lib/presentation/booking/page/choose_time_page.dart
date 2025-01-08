@@ -308,22 +308,29 @@ class _ChooseTimePageState extends State<ChooseTimePage> {
     return Builder(builder: (context) {
       return ElevatedButton(
         onPressed: () {
-          if (_fullNameController.text.isEmpty ||
-              _ageController.text.isEmpty ||
-              _descriptionController.text.isEmpty ||
-              hourChoose == -1) {
+          try {
+            if (_fullNameController.text.isEmpty ||
+                _ageController.text.isEmpty ||
+                _descriptionController.text.isEmpty ||
+                hourChoose == -1) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Pls enter all field')));
+            } else {
+              context.read<ButtonStateCubit>().execute(
+                  usecase: AddAppointmentUseCase(),
+                  params: AppointmentCreateReq(
+                      doctorId: widget.doctorEntity.id,
+                      dayBooking: today.add(Duration(days: itemChoose + 1)),
+                      hourBooking: hourChoose,
+                      victimName: _fullNameController.text,
+                      description: _descriptionController.text,
+                      age: int.parse(_ageController.text)));
+            }
+          }
+          catch(e)
+          {
             ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Pls enter all field')));
-          } else {
-            context.read<ButtonStateCubit>().execute(
-                usecase: AddAppointmentUseCase(),
-                params: AppointmentCreateReq(
-                    doctorId: widget.doctorEntity.id,
-                    dayBooking: today.add(Duration(days: itemChoose + 1)),
-                    hourBooking: hourChoose,
-                    victimName: _fullNameController.text,
-                    description: _descriptionController.text,
-                    age: int.parse(_ageController.text)));
+                const SnackBar(content: Text('Something went wroong')));
           }
         },
         style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),

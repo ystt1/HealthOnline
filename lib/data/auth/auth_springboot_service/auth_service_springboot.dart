@@ -39,7 +39,7 @@ class AuthServiceSpringbootImp extends AuthServiceSpringboot {
         return Left(responseBody['message'] ?? "Unknown error");
       }
     } catch (e) {
-      return Left(e);
+      return Left(e.toString());
     }
   }
 
@@ -62,7 +62,7 @@ class AuthServiceSpringbootImp extends AuthServiceSpringboot {
         return Left(responseBody["message"] ?? "Unknown error");
       }
     } catch (e) {
-      return Left(e);
+      return Left(e.toString());
     }
   }
 }
